@@ -1,0 +1,174 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-11-29 13:38:05.767149",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_avib",
+  "company",
+  "branch",
+  "supplier_group",
+  "supplier",
+  "status",
+  "column_break_nmwr",
+  "as_on_date",
+  "payment_posting_date",
+  "mode_of_payment",
+  "section_break_hctl",
+  "company_bank_account",
+  "column_break_rmtq",
+  "paid_from_account",
+  "section_break_ycyq",
+  "items",
+  "process_data",
+  "payment",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_avib",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "supplier_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier Group",
+   "options": "Supplier Group"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "HTML Editor",
+   "label": "Status"
+  },
+  {
+   "fieldname": "column_break_nmwr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "as_on_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "As On Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "payment_posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Payment Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mode_of_payment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mode Of Payment",
+   "options": "Mode of Payment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_hctl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_bank_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bulk Payment Tool",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_rmtq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paid_from_account",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Paid From Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_ycyq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Bulk Payment Items"
+  },
+  {
+   "fieldname": "process_data",
+   "fieldtype": "Button",
+   "label": "Process Data"
+  },
+  {
+   "fieldname": "payment",
+   "fieldtype": "Table",
+   "label": "Payment",
+   "options": "Bulk Payment Entries"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-11-29 15:02:58.287097",
+ "modified_by": "Administrator",
+ "module": "Bulk Payment",
+ "name": "Bulk Payment Tool",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
