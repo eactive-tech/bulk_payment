@@ -136,7 +136,7 @@ def bulk_payment_outstanding():
                     a["branch"] = frappe.db.get_value(a.get("voucher_type"), a.get("voucher_no"), "branch")
                 
                 if a.get("voucher_type") == 'Journal Entry':
-                    a["branch"] = frappe.db.get_value(a.get("voucher_type"), a.get("voucher_no"), "custom_branch")
+                    a["branch"] = frappe.db.get_value(a.get("voucher_type"), a.get("voucher_no"), "branch")
                 
                 filtered_result.append(a)
             else:
