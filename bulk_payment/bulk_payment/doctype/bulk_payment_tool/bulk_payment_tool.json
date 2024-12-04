@@ -70,6 +70,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "Today",
    "fieldname": "as_on_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -77,6 +78,7 @@
    "reqd": 1
   },
   {
+   "default": "Today",
    "fieldname": "payment_posting_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -148,7 +150,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-29 15:02:58.287097",
+ "modified": "2024-12-04 15:33:49.990512",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Tool",

@@ -9,6 +9,9 @@ frappe.ui.form.on('Bulk Payment Tool', {
             };
         });
 
+
+        // const hasPayments = frm.doc.payment && frm.doc.payment.length > 0;
+
         frm.add_custom_button("Process Payments", function () {
             frappe.call({
                 method: "bulk_payment.bulk_payment.api.bulk_payment_process",
@@ -38,11 +41,18 @@ frappe.ui.form.on('Bulk Payment Tool', {
             };
         });
 
-    
+        
         frm.add_custom_button("Download CSV", function() {
             download_csv(frm);
         });
     },
+
+    // validate(frm) {
+    //     if (!frm.doc.payment || frm.doc.payment.length === 0) {
+    //         frappe.msgprint(__('Please add at least one payment entry before submitting.'));
+    //         frappe.validated = false; 
+    //     }
+    // },
 
     process_data(frm) {
         set_payment_details(frm);
@@ -71,6 +81,7 @@ frappe.ui.form.on('Bulk Payment Tool', {
                         '<div style="padding: 5px 10px; background-color: #28a745; color: white; font-weight: bold; border-radius: 5px; display: inline-block;">Success</div>'
                     );
                 }
+                frm.reload_doc();
             }
         }).catch((error) => {
             frappe.msgprint({
