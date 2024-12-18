@@ -214,3 +214,6 @@ app_license = "MIT"
 # 	"bulk_payment.auth.validate"
 # ]
 
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "=", "Bulk Payment"]]}
+]
