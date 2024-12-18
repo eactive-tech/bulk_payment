@@ -93,40 +93,95 @@ function set_payment_details(frm) {
     frm.refresh_field('payment');
 }
 
+
+
 function download_csv_function(frm) {
     const payment_entries = frm.doc.payment || [];
-
 
     if (!payment_entries.length) {
         frappe.msgprint(__('No payment entries to download.'));
         return;
     }
 
-    let csv_data = 'Party,Voucher Type,Posting Date,Amount To Pay,Reference No,Reference Date,Mode of Payment,Party Account,Cheque Reference No,Cheque Reference Date,Branch,CF Code\n';
+    let csv_data = 'Account Number,Account Name,Amount To Pay,IFSC Code,Transaction Date\n';  // Removed Email column
 
-    payment_entries.forEach(function(entry) {
-        csv_data += [
-            entry.party,
-            entry.voucher_type,
-            entry.posting_date,
-            entry.amount_to_pay,
-            entry.reference_no,
-            entry.reference_date,
-            entry.mode_of_payment,
-            entry.party_account,
-            entry.cheque_reference_no,
-            entry.cheque_reference_date,
-            entry.branch,
-            entry.cf_code
-        ].join(',') + '\n';
+    let promises = payment_entries.map(entry => {
+        return frappe.call({
+            method: 'frappe.client.get_list',
+            args: {
+                doctype: 'Bank Account',
+                filters: { party: entry.party },
+                fields: ['account_name', 'bank_account_no', 'branch_code']
+            }
+        }).then(r => {
+            let bank_details = (r && r.message && r.message[0]) || {};
+            return {
+                account_name: bank_details.account_name || '',
+                account_no: bank_details.bank_account_no || '',  // Changed from `account_no` to `bank_account_no`
+                ifsc_code: bank_details.branch_code || '',  // Changed from `ifsc_code` to `branch_code`
+                amount_to_pay: entry.amount_to_pay,
+                posting_date: entry.posting_date
+            };
+        });
     });
 
-    
-    const blob = new Blob([csv_data], { type: 'text/csv' });
+    Promise.all(promises).then(results => {
+        results.forEach(details => {
+            csv_data += [
+                details.account_no,
+                details.account_name,
+                details.amount_to_pay,
+                details.ifsc_code,
+                // details.email,
+                details.posting_date,
+            ].join(',') + '\n';
+        });
 
+        const blob = new Blob([csv_data], { type: 'text/csv' });
 
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'bulk_payment_entries.csv';  
-    link.click();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'bulk_payment_entries.csv';
+        link.click();
+    });
 }
+
+
+// function download_csv_function(frm) {
+//     const payment_entries = frm.doc.payment || [];
+
+
+//     if (!payment_entries.length) {
+//         frappe.msgprint(__('No payment entries to download.'));
+//         return;
+//     }
+
+//     let csv_data = 'Party,Voucher Type,Posting Date,Amount To Pay,Reference No,Reference Date,Mode of Payment,Party Account,Cheque Reference No,Cheque Reference Date,Branch,CF Code\n';
+
+    
+//     payment_entries.forEach(function(entry) {
+//         csv_data += [
+//             entry.party,
+//             entry.voucher_type,
+//             entry.posting_date,
+//             entry.amount_to_pay,
+//             entry.reference_no,
+//             entry.reference_date,
+//             entry.mode_of_payment,
+//             entry.party_account,
+//             entry.cheque_reference_no,
+//             entry.cheque_reference_date,
+//             entry.branch,
+//             entry.cf_code
+//         ].join(',') + '\n';
+//     });
+
+    
+//     const blob = new Blob([csv_data], { type: 'text/csv' });
+
+
+//     const link = document.createElement('a');
+//     link.href = URL.createObjectURL(blob);
+//     link.download = 'bulk_payment_entries.csv';  
+//     link.click();
+// }
