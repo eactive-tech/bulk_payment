@@ -10,6 +10,7 @@ def bulk_payment_outstanding():
     x = frappe.call(
         "frappe.desk.query_report.run",
         report_name="Accounts Payable",
+
         filters={
             "company": doc.get('company'),
             "report_date": doc.get('as_on_date'),
