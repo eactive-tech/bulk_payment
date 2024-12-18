@@ -47,7 +47,7 @@ class BulkPaymentTool(Document):
 							allocated_amount=invoice.get("to_pay"),
 						))
 				payment_entry.save()
-				# payment_entry.submit()
+				payment_entry.submit()
 
 
 				item.payment_entry = payment_entry.name

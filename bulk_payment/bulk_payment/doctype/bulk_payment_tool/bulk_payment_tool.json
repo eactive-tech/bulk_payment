@@ -25,6 +25,8 @@
   "company_bank_account",
   "column_break_rmtq",
   "paid_from_account",
+  "section_break_ndrx",
+  "amount_to_disburse",
   "section_break_rcuz",
   "get_outstanding",
   "section_break_ycyq",
@@ -199,6 +201,16 @@
    "fieldname": "process_payments",
    "fieldtype": "Button",
    "label": "Process Payments"
+  },
+  {
+   "fieldname": "section_break_ndrx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount_to_disburse",
+   "fieldtype": "Currency",
+   "label": "Amount to Disburse"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -209,7 +221,7 @@
    "link_fieldname": "custom_bulk_payment"
   }
  ],
- "modified": "2024-12-17 23:25:55.725800",
+ "modified": "2024-12-18 13:59:26.138242",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Tool",
@@ -217,6 +229,7 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -230,6 +243,7 @@
    "write": 1
   },
   {
+   "cancel": 1,
    "create": 1,
    "email": 1,
    "export": 1,
