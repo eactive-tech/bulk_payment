@@ -12,27 +12,6 @@ frappe.ui.form.on('Bulk Payment Tool', {
 
         // const hasPayments = frm.doc.payment && frm.doc.payment.length > 0;
 
-        frm.add_custom_button("Process Payments", function () {
-            frappe.call({
-                method: "bulk_payment.bulk_payment.api.bulk_payment_process",
-                args: {
-                    doc: frm.doc,
-                    is_dirty: frm.is_dirty() ? 1 : 0
-                },
-                btn: $('.primary-action'),
-                freeze: true,
-                callback: function (r) {
-                    if (r.message) {
-                        frappe.msgprint(r.message);
-                        frm.reload_doc();
-                    }
-                },
-                error: function (err) {
-                    console.error(err);
-                }
-            });
-        });
-
         frm.set_query("company_bank_account", function () {
             return {
                 filters: {
@@ -40,32 +19,25 @@ frappe.ui.form.on('Bulk Payment Tool', {
                 }
             };
         });
+    },
 
-        
-        frm.add_custom_button("Download CSV", function() {
-            download_csv(frm);
-        });
+    download_csv: function(frm) {
+        download_csv_function(frm);
     },
 
     // validate(frm) {
-    //     if (!frm.doc.payment || frm.doc.payment.length === 0) {
-    //         frappe.msgprint(__('Please add at least one payment entry before submitting.'));
-    //         frappe.validated = false; 
+    //     if (frm.doc.items.length > 0) {
+    //         frm.doc.items.forEach(element => {
+    //             if (element.to_pay > element.outstanding) {
+    //                 frappe.throw(`#Row ${element.idx} - Amount to Pay can not be greater than outstanding amount`)
+    //             }
+    //         });
     //     }
     // },
 
-    process_data(frm) {
-        set_payment_details(frm);
-    },
+    get_outstanding(frm) {
 
-    after_save(frm) {
-        if (frm.fields_dict.status) 
-            console.log("after_save event triggered");{
-            const $statusField = frm.fields_dict.status.$wrapper;
-            $statusField.html(
-                '<div style="padding: 5px 10px; background-color: #ffa500; color: white; font-weight: bold; border-radius: 5px; display: inline-block;">Processing...</div>'
-            );
-        }
+        frm.set_value("status", "In Progress")
 
         frappe.call({
             method: "bulk_payment.bulk_payment.api.bulk_payment_outstanding", 
@@ -74,13 +46,7 @@ frappe.ui.form.on('Bulk Payment Tool', {
             }
         }).then((response) => {
             if (response.message === "Success") {
-            
-                if (frm.fields_dict.status) {
-                    const $statusField = frm.fields_dict.status.$wrapper;
-                    $statusField.html(
-                        '<div style="padding: 5px 10px; background-color: #28a745; color: white; font-weight: bold; border-radius: 5px; display: inline-block;">Success</div>'
-                    );
-                }
+                frm.set_value("status", "Success")
                 frm.reload_doc();
             }
         }).catch((error) => {
@@ -89,16 +55,23 @@ frappe.ui.form.on('Bulk Payment Tool', {
                 message: __('An error occurred while fetching outstanding payments.'),
                 indicator: 'red'
             });
+
+            frm.set_value("status", "Error")
             console.error(error);
         });
-    }
+    },
+
+    process_payments: function(frm) {
+        set_payment_details(frm);
+    },
+
 });
 
 
 function set_payment_details(frm) {
     frm.clear_table('payment');
     frm.doc.items.forEach(i => {
-        if (i.pay == 1) {
+        if (i.to_pay !== 0) {
         
             let existing_row = frm.doc.payment.find(r => r.party === i.party);
             if (existing_row) {
@@ -120,8 +93,7 @@ function set_payment_details(frm) {
     frm.refresh_field('payment');
 }
 
-
-function download_csv(frm) {
+function download_csv_function(frm) {
     const payment_entries = frm.doc.payment || [];
 
 

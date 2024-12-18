@@ -1,29 +1,39 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2024-11-29 13:38:05.767149",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "section_break_avib",
   "company",
+  "column_break_jprj",
   "branch",
+  "column_break_eoog",
   "supplier_group",
+  "column_break_nmwr",
   "supplier",
   "status",
-  "column_break_nmwr",
+  "section_break_awbp",
   "as_on_date",
+  "column_break_wqgv",
   "payment_posting_date",
+  "column_break_jsyh",
   "mode_of_payment",
   "section_break_hctl",
   "company_bank_account",
   "column_break_rmtq",
   "paid_from_account",
+  "section_break_rcuz",
+  "get_outstanding",
   "section_break_ycyq",
   "items",
-  "process_data",
+  "process_payments",
+  "download_csv",
   "payment",
-  "amended_from"
+  "amended_from",
+  "naming_series"
  ],
  "fields": [
   {
@@ -59,11 +69,6 @@
    "in_list_view": 1,
    "label": "Supplier",
    "options": "Supplier"
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "HTML Editor",
-   "label": "Status"
   },
   {
    "fieldname": "column_break_nmwr",
@@ -102,7 +107,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Company Bank Account",
-   "options": "Bank Account"
+   "options": "Bank Account",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -119,6 +125,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "company_bank_account.account",
    "fieldname": "paid_from_account",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -136,24 +143,77 @@
    "options": "Bulk Payment Items"
   },
   {
-   "fieldname": "process_data",
-   "fieldtype": "Button",
-   "label": "Process Data"
-  },
-  {
    "fieldname": "payment",
    "fieldtype": "Table",
    "label": "Payment",
    "options": "Bulk Payment Entries"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jprj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_eoog",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_awbp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_wqgv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jsyh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "BP.YYYY.####"
+  },
+  {
+   "fieldname": "section_break_rcuz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "download_csv",
+   "fieldtype": "Button",
+   "label": "Download CSV"
+  },
+  {
+   "fieldname": "get_outstanding",
+   "fieldtype": "Button",
+   "label": "Get Outstanding"
+  },
+  {
+   "fieldname": "process_payments",
+   "fieldtype": "Button",
+   "label": "Process Payments"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-12-04 15:33:49.990512",
+ "links": [
+  {
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "custom_bulk_payment"
+  }
+ ],
+ "modified": "2024-12-17 23:25:55.725800",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Tool",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -168,9 +228,45 @@
    "share": 1,
    "submit": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
   }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [
+  {
+   "color": "Blue",
+   "title": "Draft"
+  },
+  {
+   "color": "Orange",
+   "title": "In Progress"
+  },
+  {
+   "color": "Green",
+   "title": "Completed"
+  }
+ ]
 }
