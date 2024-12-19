@@ -75,3 +75,27 @@ def bulk_payment_outstanding():
     else:
         frappe.log_error(message="Expected a list for x['result']", title='Unexpected Result Structure')
     
+    
+    
+# @frappe.whitelist()
+# def get_party_detail():
+#     doc = json.loads(frappe.form_dict.get('doc'))
+#     party = doc.get('party')
+    
+#     address = frappe.db.get_value('Dynamic Link',{'parenttype':'Address','link_name':party},['parent'],as_dict=1)
+    
+#     email = frappe.get_doc('Address',address.parent).email_id
+    
+#     bank_details = frappe.db.get_value('Bank Account', {'party':party},['account_name','bank_account_no','branch_code'],as_dict=1)
+    
+#     bank_details['email'] = email
+    
+#     return bank_details
+    
+@frappe.whitelist()
+def generate_csv():
+    doc = json.loads(frappe.form_dict)
+    
+    
+
+    

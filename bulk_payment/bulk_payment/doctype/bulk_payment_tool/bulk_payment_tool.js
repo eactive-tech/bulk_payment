@@ -103,25 +103,34 @@ function download_csv_function(frm) {
         return;
     }
 
-    let csv_data = 'Account Number,Account Name,Amount To Pay,IFSC Code,Transaction Date\n';  // Removed Email column
+    let csv_data = 'Account Number,Account Name,Amount To Pay,IFSC Code,Transaction Date,Email\n';
 
     let promises = payment_entries.map(entry => {
         return frappe.call({
-            method: 'frappe.client.get_list',
+            method: 'bulk_payment.bulk_payment.api.get_party_detail', 
             args: {
-                doctype: 'Bank Account',
-                filters: { party: entry.party },
-                fields: ['account_name', 'bank_account_no', 'branch_code']
+                doc: frm.doc 
             }
-        }).then(r => {
-            let bank_details = (r && r.message && r.message[0]) || {};
-            return {
-                account_name: bank_details.account_name || '',
-                account_no: bank_details.bank_account_no || '',  // Changed from `account_no` to `bank_account_no`
-                ifsc_code: bank_details.branch_code || '',  // Changed from `ifsc_code` to `branch_code`
-                amount_to_pay: entry.amount_to_pay,
-                posting_date: entry.posting_date
-            };
+        }).then(bank_response => {
+            if (bank_response && bank_response.message) {
+                let bank_details = bank_response.message[0]; 
+
+                let account_name = bank_details.account_name || '';
+                let account_no = bank_details.bank_account_no || '';  
+                let ifsc_code = bank_details.ifsc_code || '';  
+                let email = bank_details.email || '';  
+                let amount_to_pay = entry.amount_to_pay || '';  
+                let posting_date = entry.posting_date || '';  
+
+                return {
+                    account_name,
+                    account_no,
+                    amount_to_pay,
+                    ifsc_code,
+                    posting_date,
+                    email
+                };
+            }
         });
     });
 
@@ -132,19 +141,24 @@ function download_csv_function(frm) {
                 details.account_name,
                 details.amount_to_pay,
                 details.ifsc_code,
-                // details.email,
                 details.posting_date,
+                details.email
             ].join(',') + '\n';
         });
 
         const blob = new Blob([csv_data], { type: 'text/csv' });
-
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'bulk_payment_entries.csv';
         link.click();
+    }).catch(error => {
+        console.error('Error generating CSV:', error);
+        frappe.msgprint(__('An error occurred while generating the CSV.'));
     });
 }
+
+
+
 
 
 // function download_csv_function(frm) {
