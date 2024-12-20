@@ -8,18 +8,26 @@
  "field_order": [
   "detail_section",
   "party",
-  "party_account",
-  "voucher_type",
+  "column_break_myoa",
   "posting_date",
-  "branch",
   "amount_section",
   "amount_to_pay",
-  "mode_of_payment",
   "reference_section",
   "reference_number",
   "reference_date",
+  "column_break_kknp",
   "cheque_reference_no",
   "cheque_reference_date",
+  "bank_details_section",
+  "bank_account",
+  "column_break_oqda",
+  "account_number",
+  "beneficiary_name",
+  "transaction_type",
+  "column_break_pfrn",
+  "ifsc_code",
+  "bank_name",
+  "section_break_nekc",
   "payment_entry"
  ],
  "fields": [
@@ -29,13 +37,6 @@
    "in_list_view": 1,
    "label": "Party",
    "options": "Supplier"
-  },
-  {
-   "fieldname": "voucher_type",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Voucher Type",
-   "read_only": 1
   },
   {
    "fieldname": "posting_date",
@@ -64,18 +65,6 @@
    "label": "Reference Date"
   },
   {
-   "fieldname": "mode_of_payment",
-   "fieldtype": "Link",
-   "label": "Mode Of Payment",
-   "options": "Mode of Payment"
-  },
-  {
-   "fieldname": "party_account",
-   "fieldtype": "Data",
-   "label": "Party Account",
-   "read_only": 1
-  },
-  {
    "fieldname": "cheque_reference_no",
    "fieldtype": "Data",
    "label": "Cheque Reference No"
@@ -85,12 +74,6 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Cheque Reference Date"
-  },
-  {
-   "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Branch"
   },
   {
    "fieldname": "detail_section",
@@ -111,12 +94,73 @@
    "fieldname": "payment_entry",
    "fieldtype": "Data",
    "label": "Payment Entry"
+  },
+  {
+   "fieldname": "column_break_myoa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_kknp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Details"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "column_break_pfrn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_oqda",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "bank_account.bank_account_no",
+   "fieldname": "account_number",
+   "fieldtype": "Data",
+   "label": "Account Number"
+  },
+  {
+   "fetch_from": "bank_account.account_name",
+   "fieldname": "beneficiary_name",
+   "fieldtype": "Data",
+   "label": "Beneficiary Name"
+  },
+  {
+   "default": "N",
+   "fieldname": "transaction_type",
+   "fieldtype": "Data",
+   "label": "Transaction Type"
+  },
+  {
+   "fetch_from": "bank_account.branch_code",
+   "fieldname": "ifsc_code",
+   "fieldtype": "Data",
+   "label": "IFSC Code"
+  },
+  {
+   "fetch_from": "bank_account.bank",
+   "fieldname": "bank_name",
+   "fieldtype": "Data",
+   "label": "Bank Name"
+  },
+  {
+   "fieldname": "section_break_nekc",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-17 23:27:08.136540",
+ "modified": "2024-12-21 00:10:16.142538",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Entries",

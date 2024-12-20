@@ -62,7 +62,28 @@ frappe.ui.form.on('Bulk Payment Tool', {
     },
 
     process_payments: function(frm) {
-        set_payment_details(frm);
+        // set_payment_details(frm);
+
+        frappe.call({
+            method: "bulk_payment.bulk_payment.api.process_payments", 
+            args: {
+                doc : frm.doc
+            }
+        }).then((response) => {
+            if (response.message === "Success") {
+                frm.set_value("status", "Success")
+                frm.reload_doc();
+            }
+        }).catch((error) => {
+            frappe.msgprint({
+                title: __('Error'),
+                message: __('An error occurred while fetching outstanding payments.'),
+                indicator: 'red'
+            });
+
+            frm.set_value("status", "Error")
+            console.error(error);
+        });
     },
 
 });
@@ -102,22 +123,38 @@ function download_csv_function(frm) {
         return;
     }
 
-    let csv_data = 'Party,Voucher Type,Posting Date,Amount To Pay,Reference No,Reference Date,Mode of Payment,Party Account,Cheque Reference No,Cheque Reference Date,Branch,CF Code\n';
+    let csv_data = []
 
     payment_entries.forEach(function(entry) {
         csv_data += [
-            entry.party,
-            entry.voucher_type,
-            entry.posting_date,
+            entry.transaction_type,
+            "",
+            entry.account_number,
             entry.amount_to_pay,
-            entry.reference_no,
-            entry.reference_date,
-            entry.mode_of_payment,
-            entry.party_account,
-            entry.cheque_reference_no,
-            entry.cheque_reference_date,
-            entry.branch,
-            entry.cf_code
+            entry.beneficiary_name,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            entry.payment_entry,
+            entry.payment_entry,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            entry.posting_date,
+            "",
+            entry.ifsc_code,
+            entry.bank_name,
+            "",
+            ""
         ].join(',') + '\n';
     });
 
@@ -127,6 +164,6 @@ function download_csv_function(frm) {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'bulk_payment_entries.csv';  
+    link.download = `${frm.doc.name}.csv`;  
     link.click();
 }

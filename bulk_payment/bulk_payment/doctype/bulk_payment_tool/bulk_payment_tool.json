@@ -188,6 +188,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.docstatus == 1",
    "fieldname": "download_csv",
    "fieldtype": "Button",
    "label": "Download CSV"
@@ -221,7 +222,7 @@
    "link_fieldname": "custom_bulk_payment"
   }
  ],
- "modified": "2024-12-18 13:59:26.138242",
+ "modified": "2024-12-21 00:33:24.669486",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Tool",

@@ -75,3 +75,56 @@ def bulk_payment_outstanding():
     else:
         frappe.log_error(message="Expected a list for x['result']", title='Unexpected Result Structure')
     
+@frappe.whitelist()
+def process_payments():
+    doc = json.loads(frappe.form_dict.get('doc'))
+    name = doc.get('name')
+
+    bp = frappe.get_doc("Bulk Payment Tool", name)
+    bp.save()
+
+    total_payments = sum(item.to_pay for item in bp.items)
+
+    if total_payments <= 0:
+        frappe.throw("Total payment amount must be greater than 0")
+
+    bp.payment = []
+
+    # for item in items:
+    grouped_data = {}
+    for record in bp.items:
+        party = record.party
+        to_pay = record.to_pay
+        if party in grouped_data:
+            grouped_data[party] += to_pay
+        else:
+            grouped_data[party] = to_pay
+    
+    for party, amount in grouped_data.items():
+        
+        if amount > 0:
+            default_bank_account = get_default_bank_account(party)
+            bp.append("payment", {
+                "party": party,
+                "posting_date": bp.payment_posting_date,
+                "amount_to_pay": amount,
+                "mode_of_payment": bp.mode_of_payment,
+                # "reference_number": "",
+                # "reference_date": "",
+                # "cheque_reference_no": "", 
+                # "cheque_reference_date": "",
+                "bank_account": default_bank_account,
+                "branch": bp.branch
+            })
+
+    bp.save()
+
+    frappe.response["message"] = "Success"
+
+def get_default_bank_account(party):
+    bank_accounts = frappe.db.get_all("Bank Account", filters={"party_type": "Supplier", "party": party, "is_default": 1})
+
+    if bank_accounts:
+        return bank_accounts[0].name
+    
+    frappe.throw(f"Default Bank Account is not specifie for {party}")

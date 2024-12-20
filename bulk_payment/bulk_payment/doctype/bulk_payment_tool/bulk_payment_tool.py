@@ -22,6 +22,7 @@ class BulkPaymentTool(Document):
 					"mode_of_payment": item.get("mode_of_payment"),
 					"posting_date": self.get("payment_posting_date"),
 					"bank_account": self.get("company_bank_account"),
+					"party_bank_account": item.get("bank_account"),
 					"party_type": "Supplier",
 					"party": item.get("party"),
 					"paid_to": item.get("party_account"),
