@@ -19,7 +19,7 @@ class BulkPaymentTool(Document):
 				payment_entry = frappe.get_doc({
 					"doctype": "Payment Entry",
 					"payment_type": "Pay",
-					"mode_of_payment": item.get("mode_of_payment"),
+					"mode_of_payment": self.mode_of_payment,
 					"posting_date": self.get("payment_posting_date"),
 					"bank_account": self.get("company_bank_account"),
 					"party_bank_account": item.get("bank_account"),
@@ -31,8 +31,7 @@ class BulkPaymentTool(Document):
 					"received_amount": item.get("amount_to_pay"),
 					"reference_no": item.get("reference_number"),
 					"reference_date": item.get("reference_date"),
-					"cf_code": item.get("cf_code"),
-					"branch": item.get("branch"),
+					"branch": self.branch,
 					"source_exchange_rate": 1,
 					"Account Currency" : frappe.db.get_value("Account", self.get("paid_from_account"), "account_currency"),
 					"custom_bulk_payment": self.name

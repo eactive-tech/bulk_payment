@@ -129,7 +129,7 @@ function download_csv_function(frm) {
         csv_data += [
             entry.transaction_type,
             "",
-            entry.account_number,
+            `"'${entry.account_number}"`,
             entry.amount_to_pay,
             entry.beneficiary_name,
             "",
