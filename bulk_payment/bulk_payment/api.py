@@ -22,8 +22,6 @@ def bulk_payment_outstanding():
             "range3": "90",
             "range4": "120",
             "party_type": "Supplier",
-            "supplier_group": doc.get("supplier_group"),
-            "party": [doc.get("supplier")],
         }
     else:
         {
@@ -32,9 +30,13 @@ def bulk_payment_outstanding():
             "ageing_based_on": "Due Date",
             "range": "30, 60, 90, 120",
             "party_type": "Supplier",
-            "supplier_group": doc.get("supplier_group"),
-            "party": [doc.get("supplier")],
         }
+
+    if doc.get("supplier"):
+        filters["party"] = [doc.get("supplier")]
+
+    if doc.get("supplier_group"):
+        filters["supplier_group"] = doc.get("supplier_group")
 
     x = frappe.call(
         "frappe.desk.query_report.run",
