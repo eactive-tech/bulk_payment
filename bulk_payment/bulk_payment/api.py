@@ -1,4 +1,6 @@
 import frappe, json
+import os
+import re
 
 @frappe.whitelist()
 def bulk_payment_outstanding():
@@ -7,17 +9,38 @@ def bulk_payment_outstanding():
     
     bp = frappe.get_doc("Bulk Payment Tool", name)
 
-    x = frappe.call(
-        "frappe.desk.query_report.run",
-        report_name="Accounts Payable",
+    filters = {}
+    has_range1_filter = get_accounts_payable_filters("erpnext", "accounts_payable")
 
-        filters={
+    if has_range1_filter:
+        filters = {
+            "company": doc.get('company'),
+            "report_date": doc.get('as_on_date'),
+            "ageing_based_on": "Due Date",
+            "range1": "30",
+            "range2": "60",
+            "range3": "90",
+            "range4": "120",
+            "party_type": "Supplier",
+            "supplier_group": doc.get("supplier_group"),
+            "party": [doc.get("supplier")],
+        }
+    else:
+        {
             "company": doc.get('company'),
             "report_date": doc.get('as_on_date'),
             "ageing_based_on": "Due Date",
             "range": "30, 60, 90, 120",
             "party_type": "Supplier",
-        },
+            "supplier_group": doc.get("supplier_group"),
+            "party": [doc.get("supplier")],
+        }
+
+    x = frappe.call(
+        "frappe.desk.query_report.run",
+        report_name="Accounts Payable",
+
+        filters=filters,
         ignore_prepared_report=True
     )
     
@@ -109,8 +132,8 @@ def process_payments():
                 "posting_date": bp.payment_posting_date,
                 "amount_to_pay": amount,
                 "mode_of_payment": bp.mode_of_payment,
-                "reference_number": "-",
-                "reference_date": bp.payment_posting_date,
+                # "reference_number": "",
+                # "reference_date": "",
                 # "cheque_reference_no": "", 
                 # "cheque_reference_date": "",
                 "bank_account": default_bank_account,
@@ -128,3 +151,25 @@ def get_default_bank_account(party):
         return bank_accounts[0].name
     
     frappe.throw(f"Default Bank Account is not specifie for {party}")
+
+
+
+
+def get_accounts_payable_filters(app_name, report_name):
+
+    has_range1_filter = False
+
+    js_file_path = os.path.join(
+        frappe.get_app_path(app_name),
+        "accounts",
+        "report",
+        "accounts_payable",
+        f"{report_name.replace(' ', '_').lower()}.js"
+    )
+    
+    with open(js_file_path, 'r') as file:
+        content = file.read()
+        if "range1" in content:
+            has_range1_filter = True
+
+    return has_range1_filter
