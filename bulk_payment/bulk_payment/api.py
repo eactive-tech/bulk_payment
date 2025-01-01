@@ -44,7 +44,7 @@ def bulk_payment_outstanding():
 
         filters=filters,
         ignore_prepared_report=True
-    )
+    ) 
     
     # Check if x["result"] is a list
     if isinstance(x["result"], list):
@@ -139,7 +139,9 @@ def process_payments():
                 # "cheque_reference_no": "", 
                 # "cheque_reference_date": "",
                 "bank_account": default_bank_account,
-                "branch": bp.branch
+                "branch": bp.branch,
+                "reference_number" : "-",
+                "reference_date": bp.payment_posting_date
             })
 
     bp.save()

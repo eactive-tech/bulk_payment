@@ -97,6 +97,7 @@ function set_payment_details(frm) {
             let existing_row = frm.doc.payment.find(r => r.party === i.party);
             if (existing_row) {
                 existing_row.amount_to_pay = existing_row.amount_to_pay + i.to_pay;
+                
             } else {
                 let row = frm.add_child('payment');
                 row.party = i.party;
@@ -108,6 +109,7 @@ function set_payment_details(frm) {
                 row.branch = i.branch;
                 row.cf_code = i.cf_code;
                 row.voucher_type = i.voucher_type;
+
             }
         }        
     });
@@ -117,19 +119,49 @@ function set_payment_details(frm) {
 function download_csv_function(frm) {
     const payment_entries = frm.doc.payment || [];
 
-
     if (!payment_entries.length) {
         frappe.msgprint(__('No payment entries to download.'));
         return;
     }
 
-    let csv_data = []
+    let csv_data = [
+        'Transaction Type',
+        'Beneficiary Code',
+        'Beneficiary Account Number',
+        'Transaction Amount',
+        'Beneficiary Name',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        'Payment Entry 1',
+        'Payment Entry 2',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        'Posting Date',
+        '',
+        'IFSC Code',
+        'Beneficiary Bank Name',
+        '',
+        '',
+        '' 
+    ].join(',') + '\n';
+
 
     payment_entries.forEach(function(entry) {
-        csv_data += [
+        let row_data = [
             entry.transaction_type,
             "",
-            `"'${entry.account_number}"`,
+            `${entry.account_number}`,
             entry.amount_to_pay,
             entry.beneficiary_name,
             "",
@@ -155,15 +187,19 @@ function download_csv_function(frm) {
             entry.bank_name,
             "",
             ""
-        ].join(',') + '\n';
+        ];
+
+        const concatenated_values = row_data.join(',');
+
+        row_data.push(`"${concatenated_values}"`); 
+
+        csv_data += row_data.join(',') + '\n';
     });
 
-    
     const blob = new Blob([csv_data], { type: 'text/csv' });
-
-
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${frm.doc.name}.csv`;  
+    link.download = `${frm.doc.name}.csv`;
     link.click();
 }
+

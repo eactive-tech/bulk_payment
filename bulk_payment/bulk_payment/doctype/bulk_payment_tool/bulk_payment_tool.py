@@ -34,7 +34,8 @@ class BulkPaymentTool(Document):
 					"branch": self.branch,
 					"source_exchange_rate": 1,
 					"Account Currency" : frappe.db.get_value("Account", self.get("paid_from_account"), "account_currency"),
-					"custom_bulk_payment": self.name
+					"custom_bulk_payment": self.name,
+					"cf_code": item.get('cf_code')
 				})
 
 				for invoice in self.items:
