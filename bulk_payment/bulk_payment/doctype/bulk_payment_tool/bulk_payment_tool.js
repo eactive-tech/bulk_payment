@@ -124,37 +124,7 @@ function download_csv_function(frm) {
         return;
     }
 
-    let csv_data = [
-        'Transaction Type',
-        'Beneficiary Code',
-        'Beneficiary Account Number',
-        'Transaction Amount',
-        'Beneficiary Name',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Payment Entry 1',
-        'Payment Entry 2',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Posting Date',
-        '',
-        'IFSC Code',
-        'Beneficiary Bank Name',
-        '',
-        '',
-        '' 
-    ].join(',') + '\n';
+    let csv_data = []
 
 
     payment_entries.forEach(function(entry) {
