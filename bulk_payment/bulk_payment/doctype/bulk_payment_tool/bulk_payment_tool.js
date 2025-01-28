@@ -158,15 +158,11 @@ function download_csv_function(frm) {
             "",
             ""
         ];
+    csv_data.push(row_data.join(','));
 
-        const concatenated_values = row_data.join(',');
-
-        row_data.push(`"${concatenated_values}"`); 
-
-        csv_data += row_data.join(',') + '\n';
     });
-
-    const blob = new Blob([csv_data], { type: 'text/csv' });
+    const csv_content = csv_data.join('\n');
+    const blob = new Blob([csv_content], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${frm.doc.name}.csv`;
