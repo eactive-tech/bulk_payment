@@ -128,6 +128,7 @@ function download_csv_function(frm) {
 
 
     payment_entries.forEach(function(entry) {
+        let formatted_date = format_date(entry.posting_date);
         let row_data = [
             entry.transaction_type,
             "",
@@ -151,7 +152,7 @@ function download_csv_function(frm) {
             "",
             "",
             "",
-            entry.posting_date,
+            formatted_date,
             "",
             entry.ifsc_code,
             entry.bank_name,
@@ -167,5 +168,11 @@ function download_csv_function(frm) {
     link.href = URL.createObjectURL(blob);
     link.download = `${frm.doc.name}.csv`;
     link.click();
+}
+
+function format_date(date_string) {
+    if (!date_string) return "";
+    const [year, month, day] = date_string.split('-');
+    return `${day}/${month}/${year}`;
 }
 
