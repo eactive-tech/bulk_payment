@@ -38,6 +38,9 @@ def bulk_payment_outstanding():
     if doc.get("supplier_group"):
         filters["supplier_group"] = doc.get("supplier_group")
 
+    if doc.get("branch"):
+        filters["branch"] = [doc.get("branch")]
+
     x = frappe.call(
         "frappe.desk.query_report.run",
         report_name="Accounts Payable",
