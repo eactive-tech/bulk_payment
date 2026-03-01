@@ -33,10 +33,11 @@ def bulk_payment_outstanding():
         }
 
     if doc.get("supplier"):
-        filters["party"] = [doc.get("supplier")]
+        filters["party"] = [supplier.get("supplier") for supplier in doc.get("supplier")]
 
     if doc.get("supplier_group"):
         filters["supplier_group"] = doc.get("supplier_group")
+
 
     if doc.get("branch"):
         filters["branch"] = [doc.get("branch")]
@@ -73,6 +74,7 @@ def bulk_payment_outstanding():
 
         # Loop through filtered result and append items to the document
         bp.items = []
+        bp.advances = []
         for res in filtered_result:
             # Validate that the party exists in the Customer or Supplier doctype
             if not frappe.db.exists("Customer", res.get('party')) and not frappe.db.exists("Supplier", res.get('party')):
@@ -80,21 +82,75 @@ def bulk_payment_outstanding():
                 continue  # Skip this row if party is invalid
             
             # Append validated data to doc.items
-            bp.append("items", {
-                'posting_date': res.get('posting_date'),
-                'reference_no': res.get('voucher_no'),
-                'party': res.get('party'),
-                'party_account': res.get('party_account'),
-                'bill_no': res.get('bill_no'),
-                'bill_date': res.get('bill_date'),
-                'outstanding': res.get('outstanding'),
-                'to_pay': 0,
-                'voucher_type': res.get('voucher_type'),
-                'branch': res.get('branch'),
-                'cheque_reference_no': res.get('cheque_reference_no', '-'),
-                'cheque_reference_date': res.get('cheque_reference_date', res.get('posting_date')),
-                'mode_of_payment': doc.get('mode_of_payment')
-            })
+            if res.get('outstanding') > 0:
+                bp.append("items", {
+                    'posting_date': res.get('posting_date'),
+                    'reference_no': res.get('voucher_no'),
+                    'party': res.get('party'),
+                    'party_account': res.get('party_account'),
+                    'bill_no': res.get('bill_no'),
+                    'bill_date': res.get('bill_date'),
+                    'outstanding': res.get('outstanding'),
+                    'to_pay': 0,
+                    'voucher_type': res.get('voucher_type'),
+                    'branch': res.get('branch'),
+                    'cheque_reference_no': res.get('cheque_reference_no', '-'),
+                    'cheque_reference_date': res.get('cheque_reference_date', res.get('posting_date')),
+                    'mode_of_payment': doc.get('mode_of_payment')
+                })
+        
+        
+        selected_suppliers = [supplier.get("supplier") for supplier in doc.get("supplier")]
+        purchase_orders = frappe.db.get_all("Purchase Order", fields=["name", "rounded_total", "advance_paid"], filters={"supplier": ["in", selected_suppliers], "docstatus": 1})
+
+        for po in purchase_orders:
+            if po.advance_paid < po.rounded_total and po.advance_paid:
+                bp.append("advances", {
+                    'posting_date': res.get('posting_date'),
+                    'reference_no': po.name,
+                    'party': res.get('party'),
+                    'party_account': res.get('party_account'),
+                    'bill_no': res.get('bill_no'),
+                    'bill_date': res.get('bill_date'),
+                    'po_amount': po.rounded_total,
+                    'advance_paid': po.advance_paid,
+                    'balance': po.rounded_total - po.advance_paid,
+                    'to_pay': 0,
+                    'voucher_type': "Purchase Order",
+                    'branch': res.get('branch'),
+                    'cheque_reference_no': res.get('cheque_reference_no', '-'),
+                    'cheque_reference_date': res.get('cheque_reference_date', res.get('posting_date')),
+                    'mode_of_payment': doc.get('mode_of_payment')
+                })
+                
+
+
+            # if res.get('outstanding') < 0:
+                
+            #     po_amount = 0
+            #     ples = frappe.db.get_all("Payment Ledger Entry", fields=["against_voucher_type", "against_voucher_no"], filters={"voucher_no": res.get('voucher_no'), "voucher_type": res.get('voucher_type'), "against_voucher_type": "Purchase Order"})
+
+            #     for ple in ples:
+            #         po_rounded_total = frappe.db.get_value("Purchase Order", ple.get("against_voucher_no"), "rounded_total")
+            #         po_amount = po_amount + po_rounded_total
+
+            #     bp.append("advances", {
+            #         'posting_date': res.get('posting_date'),
+            #         'reference_no': res.get('voucher_no'),
+            #         'party': res.get('party'),
+            #         'party_account': res.get('party_account'),
+            #         'bill_no': res.get('bill_no'),
+            #         'bill_date': res.get('bill_date'),
+            #         'po_amount': po_amount,
+            #         'advance_paid': res.get('outstanding'),
+            #         'balance': po_amount + res.get('outstanding') or 0,
+            #         'to_pay': 0,
+            #         'voucher_type': res.get('voucher_type'),
+            #         'branch': res.get('branch'),
+            #         'cheque_reference_no': res.get('cheque_reference_no', '-'),
+            #         'cheque_reference_date': res.get('cheque_reference_date', res.get('posting_date')),
+            #         'mode_of_payment': doc.get('mode_of_payment')
+            #     })
 
         # Save the document
         bp.save()
@@ -127,7 +183,16 @@ def process_payments():
             grouped_data[party] += to_pay
         else:
             grouped_data[party] = to_pay
-    
+
+    for record in bp.advances:
+        party = record.party
+        to_pay = record.to_pay
+        if party in grouped_data:
+            grouped_data[party] += to_pay
+        else:
+            grouped_data[party] = to_pay
+
+
     for party, amount in grouped_data.items():
         
         if amount > 0:

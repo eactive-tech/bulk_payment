@@ -1,8 +1,9 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-11-29 13:21:45.746412",
+ "creation": "2026-02-28 19:02:09.277448",
  "doctype": "DocType",
+ "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "detail_section",
@@ -15,12 +16,19 @@
   "column_break_thha",
   "bill_no",
   "bill_date",
-  "outstanding",
+  "po_amount",
+  "advance_paid",
+  "balance",
   "to_pay",
   "column_break_tbpa",
   "branch"
  ],
  "fields": [
+  {
+   "fieldname": "detail_section",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
   {
    "columns": 1,
    "fieldname": "posting_date",
@@ -31,19 +39,19 @@
   },
   {
    "columns": 1,
-   "fieldname": "reference_no",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Reference No",
-   "read_only": 1
-  },
-  {
-   "columns": 1,
    "fieldname": "party",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Party",
    "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "party.supplier_name",
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name",
    "read_only": 1
   },
   {
@@ -59,6 +67,14 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Voucher Type",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "reference_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reference No",
    "read_only": 1
   },
   {
@@ -81,14 +97,6 @@
   },
   {
    "columns": 1,
-   "fieldname": "outstanding",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Outstanding",
-   "read_only": 1
-  },
-  {
-   "columns": 1,
    "default": "0",
    "fieldname": "to_pay",
    "fieldtype": "Currency",
@@ -107,27 +115,37 @@
    "read_only": 1
   },
   {
-   "fieldname": "detail_section",
-   "fieldtype": "Section Break",
-   "label": "Detail"
+   "columns": 1,
+   "fieldname": "advance_paid",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Advance Paid",
+   "read_only": 1
   },
   {
-   "columns": 2,
-   "fetch_from": "party.supplier_name",
-   "fieldname": "party_name",
-   "fieldtype": "Data",
+   "columns": 1,
+   "fieldname": "po_amount",
+   "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Party Name",
+   "label": "PO Amount",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "balance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Balance",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-01 15:16:30.251773",
+ "modified": "2026-03-01 15:14:29.210914",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
- "name": "Bulk Payment Items",
+ "name": "Bulk Payment Advances",
  "owner": "Administrator",
  "permissions": [],
  "row_format": "Dynamic",

@@ -1,5 +1,10 @@
 frappe.ui.form.on('Bulk Payment Tool', {
     refresh(frm) {
+
+        disable_grid_add(frm, "items");
+        disable_grid_add(frm, "advances");
+        disable_grid_add(frm, "payment");
+
         // Set query for 'cf_code' in the 'items' table
         frm.set_query("cf_code", "items", function () {
             return {
@@ -9,8 +14,13 @@ frappe.ui.form.on('Bulk Payment Tool', {
             };
         });
 
-
-        // const hasPayments = frm.doc.payment && frm.doc.payment.length > 0;
+        frm.set_query("supplier", function () {
+            return {
+                filters: {
+                    "supplier_group": frm.doc.supplier_group
+                }
+            };
+        });
 
         frm.set_query("company_bank_account", function () {
             return {
@@ -19,6 +29,8 @@ frappe.ui.form.on('Bulk Payment Tool', {
                 }
             };
         });
+
+        calculate_balance(frm);
     },
 
     download_csv: function(frm) {
@@ -168,4 +180,54 @@ function download_csv_function(frm) {
     link.href = URL.createObjectURL(blob);
     link.download = `${frm.doc.name}.csv`;
     link.click();
+}
+
+
+
+
+frappe.ui.form.on("Bulk Payment Tool Item", {
+    to_pay(frm, cdt, cdn) {
+        calculate_balance(frm);
+    }
+});
+
+// Advances child table
+frappe.ui.form.on("Bulk Payment Tool Advance", {
+    to_pay(frm, cdt, cdn) {
+        calculate_balance(frm);
+    }
+});
+
+function calculate_balance(frm) {
+    let total = 0;
+
+    // Sum from Items table
+    (frm.doc.items || []).forEach(row => {
+        total += flt(row.to_pay);
+    });
+
+    // Sum from Advances table
+    (frm.doc.advances || []).forEach(row => {
+        total += flt(row.to_pay);
+    });
+
+    frm.set_value("balance_amount", total);
+    frm.refresh_field("balance_amount");
+}
+
+
+function disable_grid_add(frm, fieldname) {
+
+    if (frm.fields_dict[fieldname] && frm.fields_dict[fieldname].grid) {
+
+        let grid = frm.fields_dict[fieldname].grid;
+
+        grid.cannot_add_rows = true;
+
+        grid.wrapper.find('.grid-add-row').hide();
+
+        grid.wrapper.find('.grid-add-multiple-rows').hide();
+
+        frm.refresh_field(fieldname);
+    }
 }

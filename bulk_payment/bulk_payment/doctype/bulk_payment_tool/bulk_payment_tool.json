@@ -27,13 +27,17 @@
   "paid_from_account",
   "section_break_ndrx",
   "amount_to_disburse",
+  "column_break_swpo",
+  "balance_amount",
   "section_break_rcuz",
   "get_outstanding",
   "section_break_ycyq",
+  "column_break_mesq",
   "items",
+  "advances",
   "process_payments",
-  "download_csv",
   "payment",
+  "download_csv",
   "amended_from",
   "naming_series"
  ],
@@ -67,10 +71,9 @@
   },
   {
    "fieldname": "supplier",
-   "fieldtype": "Link",
-   "in_list_view": 1,
+   "fieldtype": "Table MultiSelect",
    "label": "Supplier",
-   "options": "Supplier"
+   "options": "Bulk Payment Suppliers"
   },
   {
    "fieldname": "column_break_nmwr",
@@ -139,12 +142,14 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
    "options": "Bulk Payment Items"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "payment",
    "fieldtype": "Table",
    "label": "Payment",
@@ -194,13 +199,16 @@
    "label": "Download CSV"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "get_outstanding",
    "fieldtype": "Button",
    "label": "Get Outstanding"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "process_payments",
    "fieldtype": "Button",
+   "hidden": 1,
    "label": "Process Payments"
   },
   {
@@ -212,6 +220,29 @@
    "fieldname": "amount_to_disburse",
    "fieldtype": "Currency",
    "label": "Amount to Disburse"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "advances",
+   "fieldtype": "Table",
+   "label": "Advances",
+   "options": "Bulk Payment Advances"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "column_break_mesq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_swpo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "balance_amount",
+   "fieldtype": "Currency",
+   "label": "Balance Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -222,7 +253,7 @@
    "link_fieldname": "custom_bulk_payment"
   }
  ],
- "modified": "2024-12-21 00:33:24.669486",
+ "modified": "2026-03-01 15:31:50.835957",
  "modified_by": "Administrator",
  "module": "Bulk Payment",
  "name": "Bulk Payment Tool",
@@ -268,6 +299,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [
