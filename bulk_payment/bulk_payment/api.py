@@ -104,7 +104,7 @@ def bulk_payment_outstanding():
         purchase_orders = frappe.db.get_all("Purchase Order", fields=["name", "rounded_total", "advance_paid"], filters={"supplier": ["in", selected_suppliers], "docstatus": 1})
 
         for po in purchase_orders:
-            if po.advance_paid < po.rounded_total and po.advance_paid:
+            if po.advance_paid < po.rounded_total:
                 bp.append("advances", {
                     'posting_date': res.get('posting_date'),
                     'reference_no': po.name,
