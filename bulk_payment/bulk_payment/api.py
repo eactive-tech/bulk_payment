@@ -101,25 +101,25 @@ def bulk_payment_outstanding():
         
         
         selected_suppliers = [supplier.get("supplier") for supplier in doc.get("supplier")]
-        purchase_orders = frappe.db.get_all("Purchase Order", fields=["name", "rounded_total", "advance_paid"], filters={"supplier": ["in", selected_suppliers], "docstatus": 1})
+        purchase_orders = frappe.db.get_all("Purchase Order", fields=["name", "branch", "rounded_total", "advance_paid", "transaction_date", "supplier"], filters={"supplier": ["in", selected_suppliers], "docstatus": 1})
 
         for po in purchase_orders:
             if po.advance_paid < po.rounded_total:
                 bp.append("advances", {
-                    'posting_date': res.get('posting_date'),
+                    'posting_date': po.transaction_date,
                     'reference_no': po.name,
-                    'party': res.get('party'),
-                    'party_account': res.get('party_account'),
-                    'bill_no': res.get('bill_no'),
-                    'bill_date': res.get('bill_date'),
+                    'party': po.supplier,
+                    'party_account': 'Creditors - MEPL',
+                    'bill_no': po.name,
+                    'bill_date': po.transaction_date,
                     'po_amount': po.rounded_total,
                     'advance_paid': po.advance_paid,
                     'balance': po.rounded_total - po.advance_paid,
                     'to_pay': 0,
                     'voucher_type': "Purchase Order",
-                    'branch': res.get('branch'),
-                    'cheque_reference_no': res.get('cheque_reference_no', '-'),
-                    'cheque_reference_date': res.get('cheque_reference_date', res.get('posting_date')),
+                    'branch': po.branch,
+                    'cheque_reference_no': '-',
+                    'cheque_reference_date': '',
                     'mode_of_payment': doc.get('mode_of_payment')
                 })
                 
